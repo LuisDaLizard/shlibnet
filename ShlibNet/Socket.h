@@ -23,8 +23,8 @@ namespace Shlib
 
         bool Connect(const char* address, int port);
 
-        bool ReceiveFrom(Socket socket, char* buffer, int bufferSize);
-        bool SendTo(Socket socket, char* data, int size);
+        int ReceiveFrom(Socket socket, char* buffer, int bufferSize);
+        bool SendTo(Socket socket, const char* data, int size);
 
         void Close();
         inline bool IsValid() const { return m_SocketFD != -1; }

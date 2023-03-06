@@ -76,20 +76,14 @@ namespace Shlib
         return true;
     }
 
-    bool Socket::ReceiveFrom(Socket socket, char *buffer, int size)
+    int Socket::ReceiveFrom(Socket socket, char *buffer, int size)
     {
-        int numBytes = read(socket.m_SocketFD, buffer, size);
+        int numBytes = (int)read(socket.m_SocketFD, buffer, size);
 
-        if (numBytes < 0)
-        {
-            std::cout << "Error reading from socket" << std::endl;
-            return false;
-        }
-
-        return true;
+        return numBytes;
     }
 
-    bool Socket::SendTo(Socket socket, char *data, int size)
+    bool Socket::SendTo(Socket socket, const char *data, int size)
     {
         int numBytes = write(socket.m_SocketFD, data, size);
 

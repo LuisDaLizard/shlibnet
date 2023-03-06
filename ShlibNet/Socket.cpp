@@ -46,6 +46,8 @@ namespace Shlib
         client.m_SocketFD = accept(m_SocketFD, NULL, NULL);
         if (!client.IsValid())
             std::cout << "Error on accept" << std::endl;
+
+        return client;
     }
 
     bool Socket::Connect(const char *address, int port)

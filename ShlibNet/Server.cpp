@@ -15,6 +15,8 @@ namespace Shlib
 
     Server::~Server()
     {
+        m_ServerThread.join();
+
         delete[] m_Clients;
         delete[] m_ClientThreads;
     }

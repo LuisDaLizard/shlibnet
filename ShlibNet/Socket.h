@@ -19,7 +19,6 @@ namespace Shlib
         Socket(int socketfd);
         Socket(const Socket& other);
         Socket& operator=(Socket other);
-        ~Socket();
 
         bool Listen(int port);
         Socket Accept();

@@ -28,12 +28,6 @@ namespace Shlib
         return *this;
     }
 
-    Socket::~Socket()
-    {
-        if (IsValid())
-            close(m_SocketFD);
-    }
-
     bool Socket::Listen(int port)
     {
         sockaddr_in service{};

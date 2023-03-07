@@ -76,14 +76,14 @@ namespace Shlib
         return true;
     }
 
-    int Socket::ReceiveFrom(Socket socket, char *buffer, int size)
+    int Socket::ReceiveFrom(Socket socket, char *buffer, int size) const
     {
         int numBytes = (int)read(socket.m_SocketFD, buffer, size);
 
         return numBytes;
     }
 
-    bool Socket::SendTo(Socket socket, const char *data, int size)
+    bool Socket::SendTo(Socket socket, const char *data, int size) const
     {
         int numBytes = write(socket.m_SocketFD, data, size);
 

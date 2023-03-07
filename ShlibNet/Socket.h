@@ -18,7 +18,7 @@ namespace Shlib
         Socket();
         Socket(int socketfd);
 
-        bool Listen(int port, int maxConnections);
+        bool Listen(int port);
         Socket Accept();
 
         bool Connect(const char* address, int port);

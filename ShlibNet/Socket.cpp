@@ -12,18 +12,14 @@ namespace Shlib
 {
     Socket::Socket()
         : m_SocketFD(-1)
-    {
-
-    }
+    { }
 
     Socket::Socket(int protocol)
     {
         m_SocketFD = socket(AF_INET, SOCK_STREAM, protocol);
-        if (m_SocketFD < 0)
-            std::cout << "Error creating socket" << std::endl;
     }
 
-    bool Socket::Listen(int port, int maxConnections)
+    bool Socket::Listen(int port)
     {
         sockaddr_in service{};
         service.sin_family = AF_INET;
@@ -31,10 +27,7 @@ namespace Shlib
         service.sin_addr.s_addr = INADDR_ANY;
 
         if (bind(m_SocketFD, (struct sockaddr*) &service, sizeof(service)) < 0)
-        {
-            std::cout << "Error on binding" << std::endl;
             return false;
-        }
 
         listen(m_SocketFD, 5);
 
@@ -43,11 +36,8 @@ namespace Shlib
 
     Socket Socket::Accept()
     {
-        Socket client(-1);
-
+        Socket client;
         client.m_SocketFD = accept(m_SocketFD, NULL, NULL);
-        if (!client.IsValid())
-            std::cout << "Error on accept" << std::endl;
 
         return client;
     }
@@ -58,10 +48,7 @@ namespace Shlib
         hostent* server = gethostbyname(address);
 
         if (!server)
-        {
-            std::cout << "Error finding server" << std::endl;
             return false;
-        }
 
         service.sin_family = AF_INET;
         service.sin_port = htons(port);
@@ -70,10 +57,7 @@ namespace Shlib
               server->h_length);
 
         if (connect(m_SocketFD, (const sockaddr*)&service, sizeof(service)) < 0)
-        {
-            std::cout << "Error connecting to server" << std::endl;
             return false;
-        }
 
         return true;
     }
@@ -90,10 +74,7 @@ namespace Shlib
         int numBytes = write(socket.m_SocketFD, data, size);
 
         if (numBytes < 0)
-        {
-            std::cout << "Error writing to socket" << std::endl;
             return false;
-        }
 
         return true;
     }
@@ -102,5 +83,6 @@ namespace Shlib
     {
         if (IsValid())
             close(m_SocketFD);
+        m_SocketFD = -1;
     }
 }

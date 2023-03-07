@@ -30,9 +30,9 @@ namespace Shlib
         bool Send(Socket recipient, const char* data, int size);
 
     protected:
-        virtual void OnAccept(const Socket& client, int id) = 0;
-        virtual void OnReceive(const Socket& client, int id, char* data, int size) = 0;
-        virtual void OnDisconnect(const Socket& client, int id) = 0;
+        virtual void OnAccept(const Socket& client, int id) {};
+        virtual void OnReceive(const Socket& client, int id, char* data, int size) {};
+        virtual void OnDisconnect(const Socket& client, int id) {};
 
     private:
         static void MainServerFunc(Server* server);

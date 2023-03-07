@@ -19,6 +19,21 @@ namespace Shlib
         m_SocketFD = socket(AF_INET, SOCK_STREAM, protocol);
     }
 
+    Socket::Socket(const Socket &other)
+            : m_SocketFD(other.m_SocketFD)
+    { }
+
+    Socket &Socket::operator=(Socket other) {
+        std::swap(m_SocketFD, other.m_SocketFD);
+        return *this;
+    }
+
+    Socket::~Socket()
+    {
+        if (IsValid())
+            close(m_SocketFD);
+    }
+
     bool Socket::Listen(int port)
     {
         sockaddr_in service{};

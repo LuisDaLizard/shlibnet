@@ -11,15 +11,17 @@
 namespace Shlib
 {
     Socket::Socket()
+        : m_SocketFD(-1)
     {
-        m_SocketFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    }
+
+    Socket::Socket(int protocol)
+    {
+        m_SocketFD = socket(AF_INET, SOCK_STREAM, protocol);
         if (m_SocketFD < 0)
             std::cout << "Error creating socket" << std::endl;
     }
-
-    Socket::Socket(int socketfd)
-        : m_SocketFD(socketfd)
-    { }
 
     bool Socket::Listen(int port, int maxConnections)
     {

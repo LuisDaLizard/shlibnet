@@ -12,7 +12,8 @@
 namespace Shlib
 {
     /**
-     * Facade of the linux/unix networking for simpler use of sockets
+     * Facade of the linux/unix networking for simpler use of sockets. Currently
+     * only supports tcp sockets
      */
     class Socket {
     private:
@@ -21,8 +22,8 @@ namespace Shlib
     public:
         enum Protocol
         {
-            TCP = 0,
-            UDP,
+            TCP = IPPROTO_TCP,
+            //UDP = IPPROTO_UDP,
         };
 
     public:

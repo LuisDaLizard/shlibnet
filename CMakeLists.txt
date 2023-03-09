@@ -5,9 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(SHLIBNET_SRC
         "include/ShlibNet/Socket.h"
-        "include/ShlibNet/Server.h"
         "src/ShlibNet/Socket.cpp"
-        "src/ShlibNet/Server.cpp")
+        )
 
 add_library(ShlibNet ${SHLIBNET_SRC})
 

@@ -4,9 +4,12 @@ project(ShlibNet)
 set(CMAKE_CXX_STANDARD 20)
 
 set(SHLIBNET_SRC
-        "ShlibNet/Socket.h"
-        "ShlibNet/Socket.cpp"
-        "ShlibNet/Server.cpp"
-        "ShlibNet/Server.h")
+        "include/ShlibNet/Socket.h"
+        "include/ShlibNet/Server.h"
+        "src/ShlibNet/Socket.cpp"
+        "src/ShlibNet/Server.cpp")
 
 add_library(ShlibNet ${SHLIBNET_SRC})
+
+target_include_directories(ShlibNet
+        PRIVATE "include")

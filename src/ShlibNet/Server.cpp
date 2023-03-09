@@ -2,7 +2,7 @@
 // Created by Luis Tadeo Sanchez on 3/7/23.
 //
 
-#include "Server.h"
+#include "ShlibNet/Server.h"
 
 namespace Shlib
 {

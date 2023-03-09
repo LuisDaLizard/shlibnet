@@ -14,7 +14,7 @@ namespace Shlib
         : m_SocketFD(-1)
     { }
 
-    Socket::Socket(int protocol)
+    Socket::Socket(Protocol protocol)
     {
         m_SocketFD = socket(AF_INET, SOCK_STREAM, protocol);
     }

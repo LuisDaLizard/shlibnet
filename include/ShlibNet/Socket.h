@@ -98,7 +98,7 @@ namespace Shlib
          * @param bufferSize
          * @return
          */
-        int ReceiveFrom(Socket socket, char* buffer, int bufferSize) const;
+        int ReceiveFrom(Socket socket, void* buffer, int bufferSize) const;
 
         /**
          * BLOCKING
@@ -108,7 +108,7 @@ namespace Shlib
          * @param size
          * @return
          */
-        bool SendTo(Socket socket, const char* data, int size) const;
+        bool SendTo(Socket socket, const void* data, int size) const;
 
         /**
          * Closes the socket which closes any connections to the socket

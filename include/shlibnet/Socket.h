@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-namespace Shlib
+namespace shlib
 {
     /**
      * Facade of the linux/unix networking for simpler use of sockets. Currently

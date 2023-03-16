@@ -2,13 +2,13 @@
 // Created by Luis Tadeo Sanchez on 3/6/23.
 //
 
-#include "ShlibNet/Socket.h"
+#include "shlibnet/Socket.h"
 
 #include <iostream>
 #include <unistd.h>
 #include <netdb.h>
 
-namespace Shlib
+namespace shlib
 {
     Socket::Socket()
         : m_SocketFD(-1)

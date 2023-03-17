@@ -4,9 +4,9 @@
 
 #include "shlibnet/Socket.h"
 
-#include <iostream>
 #include <unistd.h>
 #include <netdb.h>
+#include <algorithm>
 
 namespace shlib
 {

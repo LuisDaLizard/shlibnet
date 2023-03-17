@@ -63,7 +63,7 @@ namespace shlib
          * @param port
          * @return
          */
-        bool Listen(int port);
+        bool Listen(int port) const;
 
         /**
          * BLOCKING
@@ -72,7 +72,7 @@ namespace shlib
          *
          * @return The accepted socket
          */
-        Socket Accept();
+        Socket Accept() const;
 
         /**
          * BLOCKING
@@ -83,7 +83,7 @@ namespace shlib
          * @param port
          * @return
          */
-        bool Connect(const char* address, int port);
+        bool Connect(const char* address, int port) const;
 
         /**
          * BLOCKING
@@ -98,7 +98,7 @@ namespace shlib
          * @param bufferSize
          * @return
          */
-        int ReceiveFrom(Socket socket, void* buffer, int bufferSize) const;
+        int ReceiveFrom(const Socket& socket, void* buffer, int bufferSize) const;
 
         /**
          * BLOCKING
@@ -108,7 +108,7 @@ namespace shlib
          * @param size
          * @return
          */
-        bool SendTo(Socket socket, const void* data, int size) const;
+        bool SendTo(const Socket& socket, const void* data, int size) const;
 
         /**
          * Closes the socket which closes any connections to the socket
@@ -120,7 +120,7 @@ namespace shlib
          *
          * @return
          */
-        inline bool IsValid() const { return m_SocketFD != -1; }
+        [[nodiscard]] inline bool IsValid() const { return m_SocketFD != -1; }
     };
 }
 

@@ -20,15 +20,16 @@ namespace shlib
     }
 
     Socket::Socket(const Socket &other)
-            : m_SocketFD(other.m_SocketFD)
-    { }
+    {
+        m_SocketFD = other.m_SocketFD;
+    }
 
     Socket &Socket::operator=(Socket other) {
         std::swap(m_SocketFD, other.m_SocketFD);
         return *this;
     }
 
-    bool Socket::Listen(int port)
+    bool Socket::Listen(int port) const
     {
         sockaddr_in service{};
         service.sin_family = AF_INET;
@@ -43,15 +44,15 @@ namespace shlib
         return true;
     }
 
-    Socket Socket::Accept()
+    Socket Socket::Accept() const
     {
         Socket client;
-        client.m_SocketFD = accept(m_SocketFD, NULL, NULL);
+        client.m_SocketFD = accept(m_SocketFD, nullptr, nullptr);
 
         return client;
     }
 
-    bool Socket::Connect(const char *address, int port)
+    bool Socket::Connect(const char *address, int port) const
     {
         sockaddr_in service{};
         hostent* server = gethostbyname(address);
@@ -71,16 +72,16 @@ namespace shlib
         return true;
     }
 
-    int Socket::ReceiveFrom(Socket socket, void* buffer, int size) const
+    int Socket::ReceiveFrom(const Socket& socket, void* buffer, int size) const
     {
         int numBytes = (int)read(socket.m_SocketFD, buffer, size);
 
         return numBytes;
     }
 
-    bool Socket::SendTo(Socket socket, const void* data, int size) const
+    bool Socket::SendTo(const Socket& socket, const void* data, int size) const
     {
-        int numBytes = write(socket.m_SocketFD, data, size);
+        int numBytes = (int)write(socket.m_SocketFD, data, size);
 
         if (numBytes < 0)
             return false;

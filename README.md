@@ -1,5 +1,5 @@
 # ShlibNet - facade of linux/unix sockets
-[![CMake](https://github.com/LuisDaLizard/shlibnet/actions/workflows/cmake.yml/badge.svg)](https://github.com/LuisDaLizard/shlibnet/actions/workflows/cmake.yml)
+[![CMake](https://github.com/LuisDaLizard/shlibnet/actions/workflows/cmake.yml/badge.svg)](https://github.com/LuisDaLizard/shlibnet/actions/workflows/cmake.yml) [![CodeQL](https://github.com/LuisDaLizard/shlibnet/actions/workflows/codeql.yml/badge.svg)](https://github.com/LuisDaLizard/shlibnet/actions/workflows/codeql.yml)
 ### Description
 A c++ library to allow for easier use of sockets on the linux/unix platform.
 

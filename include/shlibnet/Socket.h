@@ -7,7 +7,8 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
+
+#include "Protocol.h"
 
 namespace shlib
 {
@@ -20,28 +21,21 @@ namespace shlib
         int m_SocketFD;
 
     public:
-        enum Protocol
-        {
-            TCP = IPPROTO_TCP,
-            //UDP = IPPROTO_UDP,
-        };
-
-    public:
 
         /**
-         *  Creates an invalid socket
+         *  Creates an invalid socket.
          */
         Socket();
 
         /**
-         * Creates a socket using the protocol passed in
+         * Creates a socket using the protocol passed in.
          *
          * @param protocol
          */
         explicit Socket(Protocol protocol);
 
         /**
-         * Creates a copy of a socket of which both sockets hold the same socket descriptor
+         * Creates a copy of a socket of which both sockets hold the same socket descriptor.
          *
          * @param other The socket to copy
          */
@@ -66,8 +60,6 @@ namespace shlib
         bool Listen(int port) const;
 
         /**
-         * BLOCKING
-         *
          * A server only method that accepts an incoming connection.
          *
          * @return The accepted socket
@@ -75,9 +67,7 @@ namespace shlib
         Socket Accept() const;
 
         /**
-         * BLOCKING
-         *
-         * A client only method that will connect to a given server address and port
+         * A client only method that will connect to a given server address and port.
          *
          * @param address
          * @param port
@@ -86,27 +76,23 @@ namespace shlib
         bool Connect(const char* address, int port) const;
 
         /**
-         * BLOCKING
-         *
          * This method can be used by both server and client to receive a packet
-         * from the given socket
+         * from the given socket.
          *
-         * NOTE:
-         *
-         * @param socket
-         * @param buffer
-         * @param bufferSize
-         * @return
+         * @param socket The socket to expect data from.
+         * @param buffer A buffer that will hold the data received.
+         * @param bufferSize The size of the buffer.
+         * @return The size of the actual data received.
          */
         int ReceiveFrom(const Socket& socket, void* buffer, int bufferSize) const;
 
         /**
-         * BLOCKING
+         * Sends the data passed in to the socket.
          *
-         * @param socket
-         * @param data
-         * @param size
-         * @return
+         * @param socket The socket to send the data to.
+         * @param data The bytes that should be sent.
+         * @param size The size of the data.
+         * @return Whether the data was sent successfully.
          */
         bool SendTo(const Socket& socket, const void* data, int size) const;
 
@@ -116,9 +102,9 @@ namespace shlib
         void Close();
 
         /**
-         * Checks whether the socket is valid
+         * Checks whether the socket is valid. \n\n NOTE: Does not check if the current connection is valid.
          *
-         * @return
+         * @return Whether the socket is valid
          */
         [[nodiscard]] inline bool IsValid() const { return m_SocketFD != -1; }
     };

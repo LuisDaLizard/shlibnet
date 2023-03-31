@@ -19,7 +19,7 @@ namespace shlib
     class Socket {
     private:
         int m_SocketFD;
-        sockaddr_in m_Address{};
+        sockaddr_in m_Address;
         Protocol m_Protocol;
 
     public:

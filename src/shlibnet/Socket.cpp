@@ -8,11 +8,13 @@
 #include <netdb.h>
 #include <algorithm>
 #include <strings.h>
+#include <iostream>
+#include <arpa/inet.h>
 
 namespace shlib
 {
     Socket::Socket(Protocol protocol)
-        : m_Protocol(protocol), m_Address()
+            : m_Protocol(protocol), m_Address()
     {
         switch(m_Protocol)
         {
@@ -20,7 +22,7 @@ namespace shlib
                 m_SocketFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
                 break;
             case UDP:
-                m_SocketFD = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+                m_SocketFD = socket(AF_INET, SOCK_DGRAM, 0);
                 break;
             default:
                 m_SocketFD = -1;
@@ -48,7 +50,7 @@ namespace shlib
         m_Address.sin_port = htons(port);
         m_Address.sin_addr.s_addr = INADDR_ANY;
 
-        if (bind(m_SocketFD, (struct sockaddr*) &m_Address, sizeof(m_Address)) < 0)
+        if (bind(m_SocketFD, (sockaddr*) &m_Address, sizeof(m_Address)) < 0)
             return false;
 
         if (m_Protocol == Protocol::TCP)
@@ -92,12 +94,19 @@ namespace shlib
         return true;
     }
 
+    void *get_in_addr(struct sockaddr *sa)
+    {
+        if (sa->sa_family == AF_INET)
+            return &(((struct sockaddr_in*)sa)->sin_addr);
+        return &(((struct sockaddr_in6*)sa)->sin6_addr);
+    }
+
     int Socket::Receive(void* buffer, int size, Socket* socket) const
     {
         if (socket && m_Protocol != socket->m_Protocol)
             return 0;
 
-        socklen_t addrSize;
+        socklen_t addrSize = sizeof(m_Address);
 
         switch(m_Protocol)
         {
@@ -107,10 +116,10 @@ namespace shlib
                 return (int)recvfrom(socket->m_SocketFD, buffer, size, 0, nullptr, nullptr);
             case UDP:
                 if (!socket)
-                    return (int)recvfrom(m_SocketFD, buffer, size, 0, nullptr, nullptr);
-                return (int)recvfrom(m_SocketFD, buffer, size, 0, (sockaddr *)&socket->m_Address, &addrSize);
+                    return (int)recvfrom(m_SocketFD, buffer, size, MSG_WAITALL, (sockaddr*) &m_Address, &addrSize);
+                return (int)recvfrom(m_SocketFD, buffer, size, MSG_WAITALL, (sockaddr *)&socket->m_Address, &addrSize);
             default:
-                return 0;
+                return -1;
         }
     }
 
@@ -134,18 +143,14 @@ namespace shlib
 
                 return true;
             case UDP:
-                if (!socket)
-                    return false;
-
-                numBytes = (int)sendto(m_SocketFD, data, size, 0, (struct sockaddr*) &socket->m_Address, sizeof(socket->m_Address));
+                numBytes = (int)sendto(m_SocketFD, data, size, 0, (sockaddr*) &socket->m_Address, sizeof(socket->m_Address));
 
                 if (numBytes < 0)
                     return false;
 
                 return true;
-            default:
-                return false;
         }
+        return false;
     }
 
     void Socket::Close()

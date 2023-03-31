@@ -18,10 +18,13 @@ namespace shlib
         {
             case TCP:
                 m_SocketFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+                break;
             case UDP:
                 m_SocketFD = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+                break;
             default:
                 m_SocketFD = -1;
+                break;
         }
     }
 
@@ -58,7 +61,10 @@ namespace shlib
         Socket client;
 
         if (m_Protocol == Protocol::TCP)
+        {
             client.m_SocketFD = accept(m_SocketFD, nullptr, nullptr);
+            client.m_Protocol = Protocol::TCP;
+        }
 
         return client;
     }

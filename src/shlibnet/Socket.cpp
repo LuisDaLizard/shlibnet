@@ -7,9 +7,6 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <algorithm>
-#include <strings.h>
-#include <iostream>
-#include <arpa/inet.h>
 
 namespace shlib
 {

@@ -100,6 +100,14 @@ namespace shlib
         void Close();
 
         /**
+         *
+         *
+         * @param socket
+         * @return
+         */
+        bool operator==(const Socket& socket);
+
+        /**
          * Checks whether the socket is valid. \n\n NOTE: Does not check if the current connection is valid.
          *
          * @return Whether the socket is valid

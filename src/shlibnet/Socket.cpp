@@ -130,4 +130,20 @@ namespace shlib
             close(m_SocketFD);
         m_SocketFD = -1;
     }
+
+    bool Socket::operator==(const Socket &socket)
+    {
+        if (m_Protocol != socket.m_Protocol)
+            return false;
+
+        switch(m_Protocol)
+        {
+            case TCP:
+                return m_SocketFD == socket.m_SocketFD;
+            case UDP:
+                return false;
+            default:
+                return true;
+        }
+    }
 }

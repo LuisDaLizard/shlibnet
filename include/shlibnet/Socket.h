@@ -14,25 +14,22 @@ namespace shlib
 {
     /**
      * Facade of the linux/unix networking for simpler use of sockets. Currently
-     * only supports tcp sockets
+     * only supports TCP sockets
      */
     class Socket {
     private:
         int m_SocketFD;
+        sockaddr* m_Address;
+        socklen_t m_AddressLength;
+        Protocol m_Protocol;
 
     public:
-
-        /**
-         *  Creates an invalid socket.
-         */
-        Socket();
-
         /**
          * Creates a socket using the protocol passed in.
          *
          * @param protocol
          */
-        explicit Socket(Protocol protocol);
+        explicit Socket(Protocol protocol = Protocol::NONE);
 
         /**
          * Creates a copy of a socket of which both sockets hold the same socket descriptor.
@@ -60,9 +57,10 @@ namespace shlib
         bool Listen(int port) const;
 
         /**
-         * A server only method that accepts an incoming connection.
+         * A server only method that accepts an incoming connection. This returns an
+         * invalid socket if the protocol does not support accepting connections.
          *
-         * @return The accepted socket
+         * @return The accepted socket.
          */
         Socket Accept() const;
 
@@ -73,7 +71,7 @@ namespace shlib
          * @param port
          * @return
          */
-        bool Connect(const char* address, int port) const;
+        bool Connect(const char* address, int port);
 
         /**
          * This method can be used by both server and client to receive a packet
@@ -84,7 +82,7 @@ namespace shlib
          * @param bufferSize The size of the buffer.
          * @return The size of the actual data received.
          */
-        int ReceiveFrom(const Socket& socket, void* buffer, int bufferSize) const;
+        int Receive(void* buffer, int bufferSize, Socket* socket = nullptr) const;
 
         /**
          * Sends the data passed in to the socket.
@@ -94,7 +92,7 @@ namespace shlib
          * @param size The size of the data.
          * @return Whether the data was sent successfully.
          */
-        bool SendTo(const Socket& socket, const void* data, int size) const;
+        bool Send(const Socket& socket, const void* data, int size) const;
 
         /**
          * Closes the socket which closes any connections to the socket

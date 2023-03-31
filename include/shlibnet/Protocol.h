@@ -11,6 +11,7 @@ namespace shlib
 {
     enum Protocol
     {
+        NONE = -1,
         TCP = IPPROTO_TCP,
         UDP = IPPROTO_UDP,
     };

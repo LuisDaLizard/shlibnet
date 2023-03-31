@@ -12,7 +12,7 @@
 namespace shlib
 {
     Socket::Socket(Protocol protocol)
-        : m_Protocol(protocol)
+        : m_Protocol(protocol), m_Address()
     {
         switch(m_Protocol)
         {
@@ -32,22 +32,23 @@ namespace shlib
     {
         m_SocketFD = other.m_SocketFD;
         m_Protocol = other.m_Protocol;
+        m_Address = other.m_Address;
     }
 
     Socket &Socket::operator=(Socket other) {
         std::swap(m_SocketFD, other.m_SocketFD);
         std::swap(m_Protocol, other.m_Protocol);
+        std::swap(m_Address, other.m_Address);
         return *this;
     }
 
-    bool Socket::Listen(int port) const
+    bool Socket::Listen(int port)
     {
-        sockaddr_in service{};
-        service.sin_family = AF_INET;
-        service.sin_port = htons(port);
-        service.sin_addr.s_addr = INADDR_ANY;
+        m_Address.sin_family = AF_INET;
+        m_Address.sin_port = htons(port);
+        m_Address.sin_addr.s_addr = INADDR_ANY;
 
-        if (bind(m_SocketFD, (struct sockaddr*) &service, sizeof(service)) < 0)
+        if (bind(m_SocketFD, (struct sockaddr*) &m_Address, sizeof(m_Address)) < 0)
             return false;
 
         if (m_Protocol == Protocol::TCP)
@@ -71,24 +72,21 @@ namespace shlib
 
     bool Socket::Connect(const char *address, int port)
     {
-        sockaddr_in service{};
         hostent* server = gethostbyname(address);
 
         if (!server)
             return false;
 
-        service.sin_family = AF_INET;
-        service.sin_port = htons(port);
+        m_Address.sin_family = AF_INET;
+        m_Address.sin_port = htons(port);
         bcopy((char *)server->h_addr,
-              (char *)&service.sin_addr.s_addr,
+              (char *)&m_Address.sin_addr.s_addr,
               server->h_length);
-
-        memcpy(m_Address, &service, sizeof(service));
 
         if (m_Protocol == Protocol::UDP)
             return true;
 
-        if (connect(m_SocketFD, m_Address, sizeof(service)) < 0)
+        if (connect(m_SocketFD, (struct sockaddr*) &m_Address, sizeof(m_Address)) < 0)
             return false;
 
         return true;
@@ -99,29 +97,55 @@ namespace shlib
         if (socket && m_Protocol != socket->m_Protocol)
             return 0;
 
+        socklen_t addrSize;
+
         switch(m_Protocol)
         {
             case TCP:
                 if (!socket)
                     return (int)recv(m_SocketFD, buffer, size, 0);
-                return (int)recv(socket->m_SocketFD, buffer, size, 0);
+                return (int)recvfrom(socket->m_SocketFD, buffer, size, 0, nullptr, nullptr);
             case UDP:
                 if (!socket)
-                    return (int)recvfrom(m_SocketFD, buffer, size, MSG_WAITALL, nullptr, nullptr);
-                return (int)recvfrom(m_SocketFD, buffer, size, MSG_WAITALL, socket->m_Address, &socket->m_AddressLength);
+                    return (int)recvfrom(m_SocketFD, buffer, size, 0, nullptr, nullptr);
+                return (int)recvfrom(m_SocketFD, buffer, size, 0, (sockaddr *)&socket->m_Address, &addrSize);
             default:
                 return 0;
         }
     }
 
-    bool Socket::Send(const Socket& socket, const void* data, int size) const
+    bool Socket::Send(const void* data, int size, const Socket* socket) const
     {
-        int numBytes = (int)write(socket.m_SocketFD, data, size);
-
-        if (numBytes < 0)
+        if (socket && m_Protocol != socket->m_Protocol)
             return false;
 
-        return true;
+        int numBytes = 0;
+
+        switch(m_Protocol)
+        {
+            case TCP:
+                if (!socket)
+                    numBytes = (int)send(m_SocketFD, data, size, 0);
+                else
+                    numBytes = (int)send(socket->m_SocketFD, data, size, 0);
+
+                if (numBytes < 0)
+                    return false;
+
+                return true;
+            case UDP:
+                if (!socket)
+                    return false;
+
+                numBytes = (int)sendto(m_SocketFD, data, size, 0, (struct sockaddr*) &socket->m_Address, sizeof(socket->m_Address));
+
+                if (numBytes < 0)
+                    return false;
+
+                return true;
+            default:
+                return false;
+        }
     }
 
     void Socket::Close()
@@ -129,21 +153,5 @@ namespace shlib
         if (IsValid())
             close(m_SocketFD);
         m_SocketFD = -1;
-    }
-
-    bool Socket::operator==(const Socket &socket)
-    {
-        if (m_Protocol != socket.m_Protocol)
-            return false;
-
-        switch(m_Protocol)
-        {
-            case TCP:
-                return m_SocketFD == socket.m_SocketFD;
-            case UDP:
-                return false;
-            default:
-                return true;
-        }
     }
 }

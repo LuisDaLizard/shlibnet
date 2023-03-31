@@ -19,8 +19,7 @@ namespace shlib
     class Socket {
     private:
         int m_SocketFD;
-        sockaddr* m_Address;
-        socklen_t m_AddressLength;
+        sockaddr_in m_Address{};
         Protocol m_Protocol;
 
     public:
@@ -54,7 +53,7 @@ namespace shlib
          * @param port
          * @return
          */
-        bool Listen(int port) const;
+        bool Listen(int port);
 
         /**
          * A server only method that accepts an incoming connection. This returns an
@@ -92,20 +91,12 @@ namespace shlib
          * @param size The size of the data.
          * @return Whether the data was sent successfully.
          */
-        bool Send(const Socket& socket, const void* data, int size) const;
+        bool Send(const void* data, int size, const Socket* socket = nullptr) const;
 
         /**
          * Closes the socket which closes any connections to the socket
          */
         void Close();
-
-        /**
-         *
-         *
-         * @param socket
-         * @return
-         */
-        bool operator==(const Socket& socket);
 
         /**
          * Checks whether the socket is valid. \n\n NOTE: Does not check if the current connection is valid.

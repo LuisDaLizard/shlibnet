@@ -13,8 +13,8 @@
 namespace shlib
 {
     /**
-     * Facade of the linux/unix networking for simpler use of sockets. Currently
-     * only supports TCP sockets
+     * Facade of the linux/unix networking for simpler use of sockets. Supports TCP and UDP
+     * sockets
      */
     class Socket {
     private:
@@ -24,40 +24,40 @@ namespace shlib
 
     public:
         /**
-         * Creates a socket using the protocol passed in.
+         * Creates a socket using the protocol passed in. Use None for an invalid socket
          *
-         * @param protocol
+         * @param protocol The protocol to use for creating the socket.
          */
         explicit Socket(Protocol protocol = Protocol::NONE);
 
         /**
          * Creates a copy of a socket of which both sockets hold the same socket descriptor.
          *
-         * @param other The socket to copy
+         * @param other The socket to copy.
          */
         Socket(const Socket& other);
 
         /**
+         * Copies the socket's fields.
          *
-         *
-         * @param other
-         * @return
+         * @param other The socket to copy.
+         * @return  The resulting socket
          */
         Socket& operator=(Socket other);
 
         /**
          * A server only method which binds the socket and listens on the given port.
          *
-         * Sets the backlog to 5
-         *
-         * @param port
+         * @param port The port to listen on
+         * @param backlog
          * @return
          */
-        bool Listen(int port);
+        bool Listen(int port, int backlog = 5);
 
         /**
          * A server only method that accepts an incoming connection. This returns an
-         * invalid socket if the protocol does not support accepting connections.
+         * invalid socket if the protocol does not support accepting connections. If
+         * using a UDP socket, do not use this method to accept connections.
          *
          * @return The accepted socket.
          */
@@ -66,9 +66,9 @@ namespace shlib
         /**
          * A client only method that will connect to a given server address and port.
          *
-         * @param address
-         * @param port
-         * @return
+         * @param address The server address.
+         * @param port The server port.
+         * @return Whether the given address and port are valid.
          */
         bool Connect(const char* address, int port);
 

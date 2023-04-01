@@ -9,11 +9,14 @@
 
 namespace shlib
 {
+    /**
+     * Represents an internet protocol. Possible values are NONE, TCP, and UDP.
+     */
     enum Protocol
     {
-        NONE = -1,
-        TCP = IPPROTO_TCP,
-        UDP = IPPROTO_UDP,
+        NONE = 0,
+        TCP,
+        UDP,
     };
 }
 

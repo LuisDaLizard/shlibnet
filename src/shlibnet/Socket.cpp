@@ -41,7 +41,7 @@ namespace shlib
         return *this;
     }
 
-    bool Socket::Listen(int port)
+    bool Socket::Listen(int port, int backlog)
     {
         m_Address.sin_family = AF_INET;
         m_Address.sin_port = htons(port);
@@ -51,7 +51,7 @@ namespace shlib
             return false;
 
         if (m_Protocol == Protocol::TCP)
-            listen(m_SocketFD, 5);
+            listen(m_SocketFD, backlog);
 
         return true;
     }

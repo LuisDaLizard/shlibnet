@@ -14,7 +14,7 @@ One such way to go about making a multithreaded Server using this library is to 
 One idea for implementing a multithreaded client is to just create one extra thread to wait for messages to be received from the server.
 
 ## Quickstart
-### Server
+### TCPServer
 ```cpp
 #include <shlibnet/Socket.h>
 #include <iostream>
@@ -24,7 +24,7 @@ using namespace shlib;
 int main()
 {
     // Create a socket using the TCP protocol.
-    Socket server(Socket::Protocol::TCP);
+    Socket server(Protocol::TCP);
 
     // Start listening for connections on the specified port.
     server.Listen(25565);
@@ -36,11 +36,11 @@ int main()
     if (!client.IsValid())
         return 1;
 
-    // ReceiveFrom() will wait a message from the specified socket
+    // Receive() will wait a message from the specified socket
     // and set the buffer passed in to the message received and
     // return the number of bytes of the message.
     char buffer[256];
-    int numBytes = server.ReceiveFrom(client, buffer, 256);
+    int numBytes = server.Receive(buffer, 256, &client);
 
     // numBytes will be <= 0 if the connection is interupted.
     if (numBytes <= 0)
@@ -51,7 +51,7 @@ int main()
     // Sends a message to the connected client. Requires the number of
     // bytes being sent.
     const char* message = "Server Hello!";
-    server.SendTo(client, message, 13);
+    server.Send(message, 13, &client);
 
     // Will close the server socket and terminate any connections with
     // clients.
@@ -61,7 +61,7 @@ int main()
 }
 ```
 
-### Client
+### TCPClient
 ```cpp
 #include <shlibnet/Socket.h>
 #include <iostream>
@@ -71,24 +71,24 @@ using namespace shlib;
 int main()
 {
     // Create a socket using the TCP protocol
-    Socket client(Socket::Protocol::TCP);
+    Socket client(Protocol::TCP);
 
     // Connects to the specified address and port. Returns
     // false if the connection failed
-    const char* address = "127.0.0.1";
+    const char* address = "127.0.0.1"; // "localhost" will also work
     if (!client.Connect(address, 25565))
         return 1;
 
     // Passing the client socket as the socket to send a message
     // to will send the message to the server.
     const char* message = "Client Hello!";
-    client.SendTo(client, message, 13);
+    client.Send(message, 13);
 
-    // ReceiveFrom() will wait until a message is sent from the given
+    // Receive() will wait until a message is sent from the given
     // socket. To receive a message from the connected server, you need
     // pass the client socket this is called on.
     char buffer[256];
-    int numBytes = client.ReceiveFrom(client, buffer, 256);
+    int numBytes = client.Receive(buffer, 256);
 
     // If the number of bytes returned is <= 0, the connection
     // was interupted.

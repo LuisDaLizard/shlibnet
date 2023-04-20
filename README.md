@@ -4,17 +4,17 @@
 A c++ library to allow for easier use of sockets on the linux/unix platform.
 
 ### Note
-As of right now, this library is missing some important features, such as Windows socket support and for using different protocols other than TCP. 
+This library only supports the use of sockets on linux/unix platforms.
 
 ## Multithreading
 Many of the methods in the Socket class are blocking so it's recommended to create a multithreaded implementation of a Server and Client. 
 
 One such way to go about making a multithreaded Server using this library is to create a main thread for the server to accept connections and a new thread for each client that is connected to the server. Each client thread on the server should be waiting for messages to be received from a client. 
 
-One idea for implementing a multithreaded client is to just create one extra thread to wait for messages to be received from the server.
+One idea for implementing a multithreaded client is to just create one extra thread to wait for messages to be received from the server. On that thread, you can handle received messages.
 
 ## Quickstart
-### TCPServer
+### TCPServer.cpp
 ```cpp
 #include <shlibnet/Socket.h>
 #include <iostream>
@@ -28,13 +28,17 @@ int main()
 
     // Start listening for connections on the specified port.
     server.Listen(25565);
-
+    
+    std::cout << "Waiting for connection" << std::endl;
+    
     // Accept() is blocking and will wait for a connection.
     Socket client = server.Accept();
 
     // If Accept() fails, an invalid Socket will be returned.
     if (!client.IsValid())
         return 1;
+        
+    std::cout << "Client connected" << std::endl;
 
     // Receive() will wait a message from the specified socket
     // and set the buffer passed in to the message received and
@@ -61,7 +65,7 @@ int main()
 }
 ```
 
-### TCPClient
+### TCPClient.cpp
 ```cpp
 #include <shlibnet/Socket.h>
 #include <iostream>
